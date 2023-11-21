@@ -1,56 +1,80 @@
 <template>
-  <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>Blank</ion-title>
-      </ion-toolbar>
-    </ion-header>
+  <ion-content>
+    <div class="button">
+      <ion-button @click="exchangeRate()">Get Data</ion-button>
+    </div>
+    <ion-grid>
+  <ion-row v-for="crypt in exchangeResult.data" :key="crypt.id">
+    <!-- First Section -->
+    <ion-col size="4">
+      <!-- Your content for the first section goes here -->
+      <div>Rank</div>
+      <div class="details">{{ crypt.rank }}</div>
+    </ion-col>
 
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-      </ion-header>
+    <!-- Second Section -->
+    <ion-col size="4">
+      <!-- Your content for the second section goes here -->
+      <div class="properties">{{ crypt.name }}</div>
+      <div class="details">{{ crypt.symbol }}</div>
+    </ion-col>
 
-      <div id="container">
-        <strong>Ready to create an app?</strong>
-        <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-      </div>
-    </ion-content>
-  </ion-page>
+    <!-- Third Section -->
+    <ion-col size="4">
+      <!-- Your content for the third section goes here -->
+      <div class="properties">USD</div>
+      <div class="details">{{ crypt.price_usd }}</div>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+<pre>{{ exchangeResult }}</pre>
+</ion-content>
 </template>
 
 <script setup lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { IonPage, IonContent, IonCol, IonGrid, IonRow } from '@ionic/vue';
+import { ref, onMounted, defineComponent } from 'vue';
+import axios from 'axios';
+
+const exchangeResult = ref()
+
+const exchangeRate = async () =>{
+  await axios('https://api.coinlore.net/api/tickers/')
+    .then(response =>{
+      exchangeResult.value = response.data
+      console.log(response)
+    })
+}
+
+onMounted(async () => await exchangeRate())
+
 </script>
 
 <style scoped>
-#container {
-  text-align: center;
-  
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
+  *{
+    margin-left: auto;
+    margin-right: auto;
+  }
+  ion-col{
+    border: solid 1px #fff;
+    color: #fff;
+    text-align: center;
+  }
+  .details{
+    margin-top: 20px;
+    font-size: 25px;
+  }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
+  .ion-button{
+    justify-content: center;
+  }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  
-  color: #8c8c8c;
-  
-  margin: 0;
-}
+  .button{
+    position: relative;
+    display: block;
+    width: 100px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+  }
 
-#container a {
-  text-decoration: none;
-}
 </style>
